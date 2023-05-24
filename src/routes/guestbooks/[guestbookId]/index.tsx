@@ -1,10 +1,9 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
+import QRCode from "qrcode";
 import { Button } from "~/components/button";
 import { Link } from "~/components/link";
-
-import QRCode from "qrcode";
-import { prisma } from "~/prisma";
+import { prisma } from "~/entry.ssr";
 
 export const useGetGuestbook = routeLoader$(async ({ params, status }) => {
   const guestbookId = parseInt(params["guestbookId"], 10);

@@ -2,7 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { Form, routeAction$, z, zod$ } from "@builder.io/qwik-city";
 import { Button } from "~/components/button";
 import { Input } from "~/components/input";
-import { prisma } from "~/prisma";
+import { prisma } from "~/entry.ssr";
 
 export const useCreateGuestbook = routeAction$(
   async (data, { redirect }) => {

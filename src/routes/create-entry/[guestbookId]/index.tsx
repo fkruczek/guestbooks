@@ -9,7 +9,7 @@ import {
 import { Button } from "~/components/button";
 import { Input } from "~/components/input";
 import { PhotoUpload } from "~/components/photo-upload";
-import { prisma } from "~/prisma";
+import { prisma } from "~/entry.ssr";
 
 export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
   const guestbookId = parseInt(params["guestbookId"], 10);
