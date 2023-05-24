@@ -1,13 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, routeAction$, z, zod$ } from "@builder.io/qwik-city";
-import { PrismaClient } from "@prisma/client";
 import { Button } from "~/components/button";
 import { Input } from "~/components/input";
+import { prisma } from "~/prisma";
 
 export const useCreateGuestbook = routeAction$(
   async (data, { redirect }) => {
-    const prisma = new PrismaClient();
-
     const guestbookInDb = await prisma.guestbook.findUnique({
       where: {
         name: data.name,

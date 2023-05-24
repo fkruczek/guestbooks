@@ -1,10 +1,9 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { PrismaClient } from "@prisma/client";
 import { Link } from "~/components/link";
+import { prisma } from "~/prisma";
 
 export const useGetGuestbooks = routeLoader$(async () => {
-  const prisma = new PrismaClient();
   const users = await prisma.guestbook.findMany();
   return users;
 });

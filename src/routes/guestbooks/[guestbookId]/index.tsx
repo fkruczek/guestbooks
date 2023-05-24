@@ -1,14 +1,13 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { PrismaClient } from "@prisma/client";
 import { Button } from "~/components/button";
 import { Link } from "~/components/link";
 
 import QRCode from "qrcode";
+import { prisma } from "~/prisma";
 
 export const useGetGuestbook = routeLoader$(async ({ params, status }) => {
   const guestbookId = parseInt(params["guestbookId"], 10);
-  const prisma = new PrismaClient();
   const guestbook = await prisma.guestbook.findUnique({
     where: { id: guestbookId },
     include: { entries: true },

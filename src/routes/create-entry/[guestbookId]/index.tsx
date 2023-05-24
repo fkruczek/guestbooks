@@ -6,15 +6,14 @@ import {
   z,
   zod$,
 } from "@builder.io/qwik-city";
-import { PrismaClient } from "@prisma/client";
 import { Button } from "~/components/button";
 import { Input } from "~/components/input";
 import { PhotoUpload } from "~/components/photo-upload";
+import { prisma } from "~/prisma";
 
 export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
   const guestbookId = parseInt(params["guestbookId"], 10);
 
-  const prisma = new PrismaClient();
   const guestbook = await prisma.guestbook.findUnique({
     where: { id: guestbookId },
   });
@@ -27,7 +26,6 @@ export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
 export const useCreateUser = routeAction$(
   async (data, { redirect }) => {
     console.log(data.photo);
-    const prisma = new PrismaClient();
 
     const guestbook = await prisma.guestbook.findUnique({
       where: { id: +data.guestbookId },
