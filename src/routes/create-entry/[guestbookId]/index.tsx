@@ -9,6 +9,7 @@ import {
 import { PrismaClient } from "@prisma/client";
 import { Button } from "~/components/button";
 import { Input } from "~/components/input";
+import { PhotoUpload } from "~/components/photo-upload";
 
 export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
   const guestbookId = parseInt(params["guestbookId"], 10);
@@ -25,6 +26,7 @@ export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
 
 export const useCreateUser = routeAction$(
   async (data, { redirect }) => {
+    console.log(data.photo);
     const prisma = new PrismaClient();
 
     const guestbook = await prisma.guestbook.findUnique({
@@ -37,7 +39,9 @@ export const useCreateUser = routeAction$(
 
     await prisma.entry.create({
       data: {
-        ...data,
+        email: data.email,
+        message: data.message,
+        name: data.name,
         guestbookId: +data.guestbookId,
       },
     });
@@ -48,6 +52,7 @@ export const useCreateUser = routeAction$(
     message: z.string(),
     email: z.string(),
     guestbookId: z.string(),
+    photo: z.any(),
   })
 );
 
@@ -58,12 +63,13 @@ export default component$(() => {
   return (
     <section>
       <h1>Create Guestbook entry:</h1>
-      <Form action={createUserAction}>
+      <Form action={createUserAction} encType="multipart/form-data">
         <input type="hidden" name="guestbookId" value={guestbookId.value} />
         <Input name="name">Name</Input>
         <Input name="email" type="email">
           Email
         </Input>
+        <PhotoUpload />
         <Input name="message">Message</Input>
         <Button type="submit">Create</Button>
       </Form>
