@@ -9,14 +9,17 @@ import {
 import { Button } from "~/components/button";
 import { Input } from "~/components/input";
 import { PhotoUpload } from "~/components/photo-upload";
-import { prisma } from "~/entry.ssr";
 
 export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
   const guestbookId = parseInt(params["guestbookId"], 10);
 
-  const guestbook = await prisma.guestbook.findUnique({
-    where: { id: guestbookId },
-  });
+  const guestbook = {
+    id: guestbookId,
+    name: "asdf",
+    email: "asdf",
+    entries: [],
+  };
+
   if (!guestbook) {
     status(404);
   }
@@ -25,24 +28,9 @@ export const useGetGuestbookId = routeLoader$(async ({ params, status }) => {
 
 export const useCreateUser = routeAction$(
   async (data, { redirect }) => {
-    console.log(data.photo);
+    // todo: check if guestbook exists
+    // todo: create guestbook
 
-    const guestbook = await prisma.guestbook.findUnique({
-      where: { id: +data.guestbookId },
-    });
-
-    if (!guestbook) {
-      throw new Error("Guestbook not found");
-    }
-
-    await prisma.entry.create({
-      data: {
-        email: data.email,
-        message: data.message,
-        name: data.name,
-        guestbookId: +data.guestbookId,
-      },
-    });
     redirect(302, "/guestbooks/" + data.guestbookId);
   },
   zod$({
