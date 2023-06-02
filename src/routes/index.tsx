@@ -1,9 +1,12 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { Link } from "~/components/link";
+import { createDbClient } from "~/database";
 
-export const useGetGuestbooks = routeLoader$(async () => {
-  return [];
+export const useGetGuestbooks = routeLoader$(async (requestEv) => {
+  const db = createDbClient(requestEv);
+  const { data } = await db.from("guestbooks").select("email,id,name");
+  return data || [];
 });
 
 export default component$(() => {
@@ -12,6 +15,7 @@ export default component$(() => {
   return (
     <section class="grid">
       <h1 class="text-xl my-2">Created guestbooks:</h1>
+      {guestbooks.value.length === 0 && <div>No guestbooks created yet</div>}
       <ul class="grid gap-2">
         {guestbooks.value.map(({ id, name }) => (
           <li key={id}>

@@ -3,31 +3,30 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import QRCode from "qrcode";
 import { Button } from "~/components/button";
 import { Link } from "~/components/link";
+import { createDbClient } from "~/database";
 
-export const useGetGuestbook = routeLoader$(async ({ params, status }) => {
-  const guestbookId = parseInt(params["guestbookId"], 10);
-  const guestbook = {
-    id: guestbookId,
-    name: "asdf",
-    email: "asdf",
-    entries: [
-      {
-        id: 1,
-        name: "asdf",
-        email: "asdf",
-        message: "asdf",
-      },
-    ],
-  };
+export const useGetGuestbook = routeLoader$(async (requestEvent) => {
+  const guestbookId = parseInt(requestEvent.params["guestbookId"], 10);
+
+  const db = createDbClient(requestEvent);
+
+  const { data: guestbook } = await db
+    .from("guestbooks")
+    .select("id,name,email,entries(*,guestbookId)")
+    .eq("id", guestbookId)
+    .limit(1)
+    .single();
+
   if (!guestbook) {
-    status(404);
+    requestEvent.status(404);
   }
+
   return guestbook;
 });
 
 function generateQRCode(guestbookId: number) {
   return QRCode.toCanvas(
-    "http://localhost:5173/guestbooks/" + guestbookId,
+    window.location.origin + "/create-entry/" + guestbookId,
     { errorCorrectionLevel: "H", width: 300 },
     function (err, canvas) {
       if (err) throw err;
@@ -43,10 +42,8 @@ export default component$(() => {
   const guestbook = useGetGuestbook();
 
   if (!guestbook.value) {
-    throw new Error("Guestbook not found");
+    return <div>Guestbook not found</div>;
   }
-
-  const guestbookId = guestbook.value.id;
 
   return (
     <section>
@@ -54,7 +51,7 @@ export default component$(() => {
         <h1 class="text-xl">Guestbook: {guestbook.value.name} </h1>
         <p>Created by: {guestbook.value.email}</p>
       </div>
-      <Button onClick$={() => generateQRCode(guestbookId)}>
+      <Button onClick$={() => generateQRCode(guestbook.value.id)}>
         Generate QR code
       </Button>
       <div id="qr-code-container" />
@@ -63,16 +60,14 @@ export default component$(() => {
           <li key={entry.id} class="my-2 bg-green-100 p-2">
             <p>Entry {index + 1}:</p>
             <div class="ml-2">
-              <p>Name: {entry.name}</p>
               <p>Email: {entry.email}</p>
               <p>Message: {entry.message}</p>
             </div>
           </li>
         ))}
       </ul>
-      <div q:slot="asdf">asdf</div>
-      <div>
-        <Link href={"/create-entry/" + guestbookId}> Add new entry</Link>
+      <div class="mt-2">
+        <Link href={"/create-entry/" + guestbook.value.id}> Add new entry</Link>
       </div>
     </section>
   );
