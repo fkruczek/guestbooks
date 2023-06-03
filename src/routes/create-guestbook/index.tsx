@@ -45,13 +45,18 @@ export default component$(() => {
           res.detail.value?.failed && alert(res.detail.value.message);
         }}
       >
-        <Input name="name" value={createUserAction.formData?.get("name")}>
+        <Input
+          name="name"
+          value={createUserAction.formData?.get("name")}
+          required
+        >
           Name
         </Input>
         <Input
           name="email"
           type="email"
           value={createUserAction.formData?.get("email")}
+          required
         >
           Email
         </Input>

@@ -87,7 +87,7 @@ export default component$(() => {
 
   return (
     <section>
-      <h1>Create Guestbook entry:</h1>
+      <h1 class="text-2xl">Create new guestbook entry:</h1>
       <Form
         action={createEntryAction}
         onSubmitCompleted$={(res: CustomEvent) => {
@@ -96,13 +96,26 @@ export default component$(() => {
         encType="multipart/form-data"
       >
         <input type="hidden" name="guestbookId" value={guestbookId.value} />
-        <Input name="name" required>
+        <Input
+          name="name"
+          required
+          value={createEntryAction.formData?.get("name")}
+        >
           Name
         </Input>
-        <Input name="email" type="email" required>
+        <Input
+          name="email"
+          type="email"
+          required
+          value={createEntryAction.formData?.get("email")}
+        >
           Email
         </Input>
-        <Input name="message" required>
+        <Input
+          name="message"
+          required
+          value={createEntryAction.formData?.get("message")}
+        >
           Message
         </Input>
         <PhotoUpload />

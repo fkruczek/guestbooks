@@ -70,9 +70,12 @@ export default component$(() => {
           </li>
         ))}
       </ul>
-      <div class="mt-2 bg-sky-200 grid justify-center p-4">
-        <Link href={"/create-entry/" + guestbook.value.id}> Add new entry</Link>
-      </div>
+      <Link
+        href={"/create-entry/" + guestbook.value.id}
+        class="mt-2 bg-sky-200 grid justify-center p-4"
+      >
+        Add new entry
+      </Link>
     </section>
   );
 });
