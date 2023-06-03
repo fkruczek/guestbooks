@@ -12,8 +12,8 @@ export const Header = component$(() => {
   const signOut = useAuthSignout();
 
   return (
-    <header class="h-10 flex justify-between items-center p-2 bg-orange-100">
-      <a href="/" class="mr-10">
+    <header class="flex justify-between items-center p-2 bg-orange-100">
+      <a href="/" class="mr-10 bg-sky-200 p-2">
         Home
       </a>
       {session.value?.user?.email ? (
@@ -25,7 +25,7 @@ export const Header = component$(() => {
         </div>
       ) : (
         <Form action={signIn}>
-          <button>Sign In</button>
+          <button class="bg-rose-300 p-2">Sign In</button>
         </Form>
       )}
     </header>

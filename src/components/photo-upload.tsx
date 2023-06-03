@@ -32,16 +32,7 @@ export const PhotoUpload = component$(() => {
   });
 
   return (
-    <div>
-      <input
-        type="file"
-        name="photo"
-        ref={fileInputRef}
-        onChange$={handleImageChange}
-        style={{ display: "none" }}
-        accept="image/*"
-        capture
-      />
+    <div class="grid justify-start">
       {imagePreviewUrl.value ? (
         <img
           src={imagePreviewUrl.value}
@@ -50,10 +41,20 @@ export const PhotoUpload = component$(() => {
           height={400}
         />
       ) : (
-        <button type="button" onClick$={handleClick}>
-          Take Photo
+        <button type="button" class="text-4xl" onClick$={handleClick}>
+          Take Photo📷
         </button>
       )}
+      <input
+        type="file"
+        name="photo"
+        ref={fileInputRef}
+        onChange$={handleImageChange}
+        accept="image/*"
+        style={{ opacity: 0 }}
+        capture
+        required
+      />
     </div>
   );
 });

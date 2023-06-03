@@ -10,6 +10,7 @@ import { Button } from "~/components/button";
 import { Input } from "~/components/input";
 import { PhotoUpload } from "~/components/photo-upload";
 import { createDbClient } from "~/database";
+import { createEntryImagePath, createEntryImageUrl } from "~/domain/entry";
 
 export const useGetGuestbookId = routeLoader$(async (requestEvent) => {
   const guestbookId = parseInt(requestEvent.params["guestbookId"], 10);
@@ -40,12 +41,28 @@ export const useCreateEntry = routeAction$(
       return requestEvent.fail(400, { message: "Guestbook not found" });
     }
 
+    const photoUploadResult = await db.storage
+      .from("guestbook_entries_photos")
+      .upload(createEntryImagePath(data.guestbookId, data.email), data.photo, {
+        upsert: true,
+      });
+
+    if (photoUploadResult.error) {
+      return requestEvent.fail(500, {
+        message: photoUploadResult.error.message,
+      });
+    }
+
     const { error } = await db.from("entries").insert([
       {
         name: data.name,
         email: data.email,
         message: data.message,
         guestbookId: data.guestbookId,
+        photoPath: createEntryImageUrl(
+          photoUploadResult.data.path,
+          requestEvent.env.get("SUPABASE_URL")
+        ),
       },
     ]);
 
@@ -79,12 +96,16 @@ export default component$(() => {
         encType="multipart/form-data"
       >
         <input type="hidden" name="guestbookId" value={guestbookId.value} />
-        <Input name="name">Name</Input>
-        <Input name="email" type="email">
+        <Input name="name" required>
+          Name
+        </Input>
+        <Input name="email" type="email" required>
           Email
         </Input>
+        <Input name="message" required>
+          Message
+        </Input>
         <PhotoUpload />
-        <Input name="message">Message</Input>
         <Button type="submit">Create</Button>
       </Form>
     </section>
